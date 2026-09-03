@@ -1,5 +1,5 @@
 # Set up our build environment to compile our application.
-FROM alpine:3.14 AS build
+FROM alpine:3.24 AS build
 WORKDIR /root
 COPY . .
 RUN apk add --no-cache build-base && gcc -o hello-world hello-world.c
@@ -23,9 +23,9 @@ WORKDIR /root
 RUN cp /home/builder/.abuild/*.pub /etc/apk/keys
 
 # Use witchery-compose to generate an image.
-RUN witchery-compose -p ~builder/payloadout/payload*.apk -k /etc/apk/keys -X http://dl-cdn.alpinelinux.org/alpine/v3.14/main /root/outimg/
+RUN witchery-compose -p ~builder/payloadout/payload*.apk -k /etc/apk/keys -X http://dl-cdn.alpinelinux.org/alpine/v3.24/main /root/outimg/
 
 # Copy the generated image to a new one.
-FROM kaniini/witchery-base:latest
+FROM appimage-sig/witchery-base:latest
 CMD ["/app/hello-world"]
 COPY --from=witchery /root/outimg/ .
